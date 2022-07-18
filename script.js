@@ -8,6 +8,7 @@ const restartBtn = document.querySelector('#restart');
 const charactersPerSecondElement = document.querySelector('.characters-per-second');
 const percentageSpacesElement = document.querySelector('#percentageSpaces');
 const charactersPerSecondSpacesElement = document.querySelector('.characters-per-second-spaces');
+const errorElement = document.querySelector('#error');
 
 let arrayRenderedQuote;
 
@@ -46,11 +47,24 @@ const renderQuote = async () => {
 };
 
 const createRenderedQuoteArray = async () => {
-  const renderedQuote = await renderQuote();
-  arrayRenderedQuote = renderedQuote.querySelectorAll('span');
-  arrayRenderedQuote[0].classList.add('active-character');
+  try {
+    const renderedQuote = await renderQuote();
+    arrayRenderedQuote = renderedQuote.querySelectorAll('span');
+    arrayRenderedQuote[0].classList.add('active-character');
+  } catch (error) {
+    renderError(errorElement, true);
+  }
 };
 
+const renderError = (errorElement, state) => {
+  if (state) {
+    errorElement.innerText = 'Error trying to get a quote, please restart';
+    errorElement.classList.remove('hide');
+    return;
+  }
+  errorElement.innerText = '';
+  errorElement.classList.add('hide');
+};
 const checkCharacters = (arrayRenderedQuote, inputValue) => {
   for (let i = 0; i < arrayRenderedQuote.length; i++) {
     if (inputValue[i] === undefined) {
@@ -110,6 +124,19 @@ const startTimer = (timerElement) => {
   timerElement.innerText = `${time} seconds`;
 };
 
+const getTypingSpeedData = (correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, time) => {
+  const arrayNoWS = Array.from(arrayRenderedQuote).filter((character) => !is_all_ws(character));
+  let correctPercentage = (correctCharacters / arrayNoWS.length) * 100;
+  let correctPercentageCharactersWithSpaces = (correctCharactersWithSpaces / arrayRenderedQuote.length) * 100;
+  let charactersPerSecond = correctCharacters / time;
+  let charactersPerSecondWithSpaces = correctCharactersWithSpaces / time;
+  return [correctPercentage, correctPercentageCharactersWithSpaces, charactersPerSecond, charactersPerSecondWithSpaces];
+};
+
+function is_all_ws(nod) {
+  return !/[^\t\n\r ]/.test(nod.textContent);
+}
+
 let time = 0;
 let timer = 0;
 let timerInterval;
@@ -134,16 +161,8 @@ inputQuoteElement.addEventListener('input', () => {
   }
 });
 
-const getTypingSpeedData = (correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, time) => {
-  const arrayNoWS = Array.from(arrayRenderedQuote).filter((character) => !is_all_ws(character));
-  let correctPercentage = (correctCharacters / arrayNoWS.length) * 100;
-  let correctPercentageCharactersWithSpaces = (correctCharactersWithSpaces / arrayRenderedQuote.length) * 100;
-  let charactersPerSecond = correctCharacters / time;
-  let charactersPerSecondWithSpaces = correctCharactersWithSpaces / time;
-  return [correctPercentage, correctPercentageCharactersWithSpaces, charactersPerSecond, charactersPerSecondWithSpaces];
-};
-
 restartBtn.addEventListener('click', () => {
+  renderError(errorElement, false);
   timer = 0;
   time = 0;
   restartBtn.blur();
@@ -153,9 +172,5 @@ restartBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   createRenderedQuoteArray();
 });
-
-function is_all_ws(nod) {
-  return !/[^\t\n\r ]/.test(nod.textContent);
-}
 
 createRenderedQuoteArray();

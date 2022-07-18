@@ -86,3 +86,7 @@ table td {
   padding: 1.5rem;
   font-size: 1.5rem;
 }
+
+.hide {
+  display: none;
+}
