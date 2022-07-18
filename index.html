@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+    <title>Speed Typing</title>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>Accuracy percentage</th>
+        <th>Time Spent</th>
+        <th>Characters per second</th>
+      </tr>
+      <tr>
+        <td class="percentage" id="percentage">Not counting spaces: 0%</td>
+        <td class="timer" id="timer">0 seconds</td>
+        <td class="characters-per-second">Not counting spaces: 0.0</td>
+      </tr>
+      <tr>
+        <td class="percentage-spaces" id="percentageSpaces">Counting spaces: 0%</td>
+        <td></td>
+        <td class="characters-per-second-spaces">Counting spaces: 0.0</td>
+      </tr>
+    </table>
+    <div class="container">
+      <div class="quote" id="quoteDisplay"></div>
+      <label class="label-input" for="inputQuote"></label>
+      <textarea id="inputQuote" class="input-quote" autofocus></textarea>
+    </div>
+    <button id="restart" class="restart-btn">Restart</button>
+  </body>
+</html>
