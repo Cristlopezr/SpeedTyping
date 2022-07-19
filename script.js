@@ -120,16 +120,16 @@ const renderCorrectPercentage = (percentageElement, percentage, percentageSpaces
 };
 
 const startTimer = (timerElement) => {
-  time += 1;
-  timerElement.innerText = `${time} seconds`;
+  seconds += 1;
+  timerElement.innerText = `${seconds} seconds`;
 };
 
-const getTypingSpeedData = (correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, time) => {
+const getTypingSpeedData = (correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, seconds) => {
   const arrayNoWS = Array.from(arrayRenderedQuote).filter((character) => !is_all_ws(character));
   let correctPercentage = (correctCharacters / arrayNoWS.length) * 100;
   let correctPercentageCharactersWithSpaces = (correctCharactersWithSpaces / arrayRenderedQuote.length) * 100;
-  let charactersPerSecond = correctCharacters / time;
-  let charactersPerSecondWithSpaces = correctCharactersWithSpaces / time;
+  let charactersPerSecond = correctCharacters / seconds;
+  let charactersPerSecondWithSpaces = correctCharactersWithSpaces / seconds;
   return [correctPercentage, correctPercentageCharactersWithSpaces, charactersPerSecond, charactersPerSecondWithSpaces];
 };
 
@@ -137,15 +137,13 @@ function is_all_ws(nod) {
   return !/[^\t\n\r ]/.test(nod.textContent);
 }
 
-let time = 0;
-let timer = 0;
-let timerInterval;
+let seconds = 0;
+let timer = null;
 
 inputQuoteElement.addEventListener('input', () => {
-  timer += 1;
-  if (timer === 1) {
-    timerInterval = setInterval(() => {
-      startTimer(timerElement, time);
+  if (!timer) {
+    timer = setInterval(() => {
+      startTimer(timerElement);
     }, 1000);
   }
   const input = inputQuoteElement.value;
@@ -154,22 +152,27 @@ inputQuoteElement.addEventListener('input', () => {
 
   if (hasFinished(arrayRenderedQuote)) {
     let [correctCharacters, correctCharactersWithSpaces] = getCorrectCharactersTotal();
-    let [correctPercentage, correctPercentageCharactersWithSpaces, charactersPerSecond, charactersPerSecondWithSpaces] = getTypingSpeedData(correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, time);
+    let [correctPercentage, correctPercentageCharactersWithSpaces, charactersPerSecond, charactersPerSecondWithSpaces] = getTypingSpeedData(correctCharacters, correctCharactersWithSpaces, arrayRenderedQuote, seconds);
     renderCorrectPercentage(percentageElement, correctPercentage, percentageSpacesElement, correctPercentageCharactersWithSpaces, charactersPerSecondElement, charactersPerSecond, charactersPerSecondSpacesElement, charactersPerSecondWithSpaces);
     handleInputElement(inputQuoteElement, input, true);
-    clearInterval(timerInterval);
+    clearInterval(timer);
+    timer = null;
   }
 });
 
-restartBtn.addEventListener('click', () => {
-  renderError(errorElement, false);
-  timer = 0;
-  time = 0;
+const handleFocus = () => {
   restartBtn.blur();
   inputQuoteElement.focus();
-  timerElement.innerText = `${time} seconds`;
+};
+
+restartBtn.addEventListener('click', () => {
+  renderError(errorElement, false);
+  seconds = 0;
+  timerElement.innerText = `${seconds} seconds`;
+  handleFocus();
   renderCorrectPercentage(percentageElement, 0, percentageSpacesElement, 0, charactersPerSecondElement, 0, charactersPerSecondSpacesElement, 0);
-  clearInterval(timerInterval);
+  clearInterval(timer);
+  timer = null;
   createRenderedQuoteArray();
 });
 
