@@ -95,8 +95,7 @@ const handleActiveCharacter = (arrayRenderedQuote, inputLength, input) => {
 
 const hasFinished = (arrayQuoteDisplay) => {
   return Array.from(arrayQuoteDisplay).every((character) => {
-    if (character.classList.contains('correct') || character.classList.contains('incorrect')) return true;
-    return false;
+    return character.classList.contains('correct') || character.classList.contains('incorrect');
   });
 };
 
