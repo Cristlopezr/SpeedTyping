@@ -1,3 +1,5 @@
+'use strict';
+
 const API_URL = 'https://api.quotable.io/random';
 
 const timerElement = document.querySelector('#timer');
@@ -43,6 +45,7 @@ const renderQuote = async () => {
   handleInputElement(inputQuoteElement, '', false);
   const quote = await getQuote();
   const splittedQuote = splitQuote(quote);
+  let quoteDisplayed;
   return (quoteDisplayed = createSpan(splittedQuote, quoteDisplayElement));
 };
 
