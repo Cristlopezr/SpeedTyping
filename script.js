@@ -1,6 +1,6 @@
 'use strict';
 
-const API_URL = 'https://api.quotable.io/rando';
+const API_URL = 'https://api.quotable.io/random';
 
 const timerElement = document.querySelector('#timer');
 const quoteDisplayElement = document.querySelector('#quoteDisplay');
@@ -50,9 +50,13 @@ const renderQuote = async () => {
 };
 
 const createRenderedQuoteArray = async () => {
-  const renderedQuote = await renderQuote();
-  arrayRenderedQuote = renderedQuote.querySelectorAll('span');
-  arrayRenderedQuote[0].classList.add('active-character');
+  try {
+    const renderedQuote = await renderQuote();
+    arrayRenderedQuote = renderedQuote.querySelectorAll('span');
+    arrayRenderedQuote[0].classList.add('active-character');
+  } catch (error) {
+    renderError(errorElement, true);
+  }
 };
 
 const renderError = (errorElement, state) => {
@@ -174,4 +178,4 @@ restartBtn.addEventListener('click', () => {
   createRenderedQuoteArray();
 });
 
-createRenderedQuoteArray().catch(() => renderError(errorElement, true));
+createRenderedQuoteArray();
